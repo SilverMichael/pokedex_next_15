@@ -1,37 +1,8 @@
 
 import React from "react";
 import { ProgressBar } from "@/app/components/ProgressBar";
+import { getPokemonDetail } from "@/services/pokemon.service";
 
-interface PokemonDetail {
-  name: string;
-  id: number;
-  sprites: {
-    other: {
-      'official-artwork': {
-        front_default: string;
-      };
-    };
-  };
-  types: {
-    type: {
-      name: string;
-    };
-  }[];
-  weight: number;
-  height: number;
-  stats: {
-    base_stat: number;
-    stat: {
-      name: string;
-    };
-  }[];
-}
-
-async function getPokemonDetail(name: string) {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-  const data = await res.json();
-  return data as PokemonDetail;
-}
 
 export default async function PokemonDetailPage({
   params,
@@ -86,7 +57,7 @@ export default async function PokemonDetailPage({
               <h1 className="text-3xl font-bold capitalize mb-2">
                 {pokemon.name} <span className="text-gray-500">#{pokemon.id.toString().padStart(3, '0')}</span>
               </h1>
-              
+
               <div className="flex gap-2 mb-4">
                 {pokemon.types.map((type) => (
                   <span
@@ -134,11 +105,3 @@ export default async function PokemonDetailPage({
   );
 }
 
-export async function generateStaticParams() {
-  const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=50');
-  const data = await res.json();
-  
-  return data.results.map((pokemon: { name: string }) => ({
-    name: pokemon.name,
-  }));
-}
