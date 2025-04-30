@@ -1,61 +1,62 @@
-
-import React from "react";
-import { ProgressBar } from "@/app/components/ProgressBar";
 import { getPokemonDetail } from "@/services/pokemon.service";
+import NavigationButtons from "./NavigationButtons";
+import Image from "next/image";
+import { typeColors } from "@/types/pokemon.types";
+import { ProgressBar } from "@/app/components/ProgressBar";
+import { getPokemonNameById } from "@/app/utils/pokemon.utils";
+import Link from "next/link";
+
+const statColors: Record<string, string> = {
+  hp: "bg-red-500",
+  attack: "bg-orange-500",
+  defense: "bg-yellow-500",
+  "special-attack": "bg-blue-500",
+  "special-defense": "bg-indigo-500",
+  speed: "bg-green-500",
+};
 
 
-export default async function PokemonDetailPage({
-  params,
-}: {
-  params: { name: string };
-}) {
-  const pokemon = await getPokemonDetail(params.name);
+export default async function PokemonDetailPage({ params }: { params: { name: string } }) {
+  const { name } = params;
+  const pokemon = await getPokemonDetail(name);
 
-  const typeColors: Record<string, string> = {
-    normal: 'bg-gray-400',
-    fire: 'bg-red-500',
-    water: 'bg-blue-500',
-    electric: 'bg-yellow-400',
-    grass: 'bg-green-500',
-    ice: 'bg-blue-200',
-    fighting: 'bg-red-700',
-    poison: 'bg-purple-500',
-    ground: 'bg-yellow-600',
-    flying: 'bg-indigo-300',
-    psychic: 'bg-pink-500',
-    bug: 'bg-green-400',
-    rock: 'bg-yellow-700',
-    ghost: 'bg-purple-700',
-    dragon: 'bg-indigo-700',
-    dark: 'bg-gray-800',
-    steel: 'bg-gray-500',
-    fairy: 'bg-pink-300',
-  };
+  const previousName = pokemon.id > 1 ? await getPokemonNameById(pokemon.id - 1) : null;
+  const nextName = pokemon.id < 898 ? await getPokemonNameById(pokemon.id + 1) : null;
 
-  const statColors: Record<string, string> = {
-    hp: 'bg-red-500',
-    attack: 'bg-orange-500',
-    defense: 'bg-yellow-500',
-    'special-attack': 'bg-blue-400',
-    'special-defense': 'bg-green-400',
-    speed: 'bg-pink-500',
-  };
 
   return (
     <main className="container mx-auto py-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+      <NavigationButtons
+        previousName={previousName}
+        nextName={nextName}
+      />
+      <div className="mb-4">
+        <Link
+          href="/"
+          className="inline-block mt-10 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded"
+        >
+          ← Retour à l’accueil
+        </Link>
+      </div>
+
+      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-6">
         <div className="p-6">
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-1">
-              <img
+              <Image
                 src={pokemon.sprites.other['official-artwork'].front_default}
                 alt={pokemon.name}
+                quality={80}
+                width={768}
+                height={768}
                 className="w-full h-auto max-w-xs mx-auto"
               />
             </div>
+
             <div className="flex-1">
               <h1 className="text-3xl font-bold capitalize mb-2">
-                {pokemon.name} <span className="text-gray-500">#{pokemon.id.toString().padStart(3, '0')}</span>
+                {pokemon.name}
+                <span className="text-gray-500 ml-2">#{pokemon.id.toString().padStart(3, '0')}</span>
               </h1>
 
               <div className="flex gap-2 mb-4">
@@ -85,7 +86,7 @@ export default async function PokemonDetailPage({
                   <div key={stat.stat.name}>
                     <div className="flex justify-between mb-1">
                       <span className="capitalize">
-                        {stat.stat.name.replace('-', ' ')}
+                        {stat.stat.name.replace("-", " ")}
                       </span>
                       <span>{stat.base_stat}</span>
                     </div>
@@ -104,4 +105,3 @@ export default async function PokemonDetailPage({
     </main>
   );
 }
-
