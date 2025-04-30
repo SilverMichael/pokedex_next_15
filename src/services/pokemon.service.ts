@@ -1,10 +1,11 @@
 import { PokemonListResponse, PokemonDetail } from "@/types/pokemon.types"
 
 const API_BASE_URL = 'https://pokeapi.co/api/v2/pokemon'
+const MAX_CACHE_SIZE = 50
 
 
 export const getPokemonList = async (limit: number = 50, offset: number = 0): Promise<PokemonListResponse> => {
-    const res = await fetch(`${API_BASE_URL}?limit=${limit}$offset=${offset}`)
+    const res = await fetch(`${API_BASE_URL}?limit=${limit}&offset=${offset}`)
     if (!res.ok) {
         throw new Error('Failed to fetch Pokemon list')
     }
@@ -12,12 +13,30 @@ export const getPokemonList = async (limit: number = 50, offset: number = 0): Pr
 }
 
 export const getPokemonDetail = async (name: string): Promise<PokemonDetail> => {
+    const key = `pokemon-${name}`
+  
+    try {
+      const cached = localStorage.getItem(key)
+      if (cached) return JSON.parse(cached)
+    } catch (_) {}
+  
     const res = await fetch(`${API_BASE_URL}/${name}`)
     if (!res.ok) {
-        throw new Error(`Failed to fetch Pokemon ${name} details`)
+      throw new Error(`Failed to fetch Pokemon ${name} details`)
     }
-    return res.json()
-}
+  
+    const data = await res.json()
+  
+    try {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('pokemon-'))
+      if (keys.length >= MAX_CACHE_SIZE) {
+        localStorage.removeItem(keys[0])
+      }
+      localStorage.setItem(key, JSON.stringify(data))
+    } catch (_) {
+     
+    }
+  
+    return data
+  }
 
-export const fetchCache = "force-cache"
-export const revalidate = 86400
