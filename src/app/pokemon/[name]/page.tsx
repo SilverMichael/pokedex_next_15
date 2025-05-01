@@ -110,7 +110,7 @@ export default async function PokemonDetailPage({ params }: { params: { name: st
               href="/"
               className="text-white text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
             >
-              ← Retour
+              ← Go to home
             </Link>
           </div>
           <div className="w-14 h-18 bg-[#ff4554] rounded-full border-4 border-gray-900 shadow-inner" />

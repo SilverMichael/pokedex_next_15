@@ -100,7 +100,7 @@ export const PokemonCard = ({ name, id, sprite, types }: PokemonCardProps) => {
                 {types.map((type) => (
                   <span
                     key={type}
-                    className={`px-3 py-1 mt-1 text-xs rounded-md text-white ${typeColors[type] || 'bg-gray-400'
+                    className={`px-3 py-1 mt-1 text-xs capitalize rounded-md text-white ${typeColors[type] || 'bg-gray-400'
                       }`}
                   >
                     {type}
@@ -108,7 +108,6 @@ export const PokemonCard = ({ name, id, sprite, types }: PokemonCardProps) => {
                 ))}
               </div>
             </div>
-            {/* Bouton étoile en haut à droite */}
             <button
               onClick={toggleFavorite}
               className="w-8 h-8 bg-white rounded-full shadow"

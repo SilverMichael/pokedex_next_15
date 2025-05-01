@@ -35,7 +35,7 @@ export default function NavBar() {
                             className={`w-full block py-4 px-6 text-center font-medium transition-all duration-300 relative
                 ${activeTab === 'favourites' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                         >
-                            Favoris
+                            Favourites
                             {activeTab === 'favourites' && (
                                 <span className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full"></span>
                             )}
