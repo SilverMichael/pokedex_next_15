@@ -18,6 +18,7 @@ const statColors: Record<string, string> = {
 
 export default async function PokemonDetailPage({ params }: { params: { name: string } }) {
   const { name } = params;
+
   const pokemon = await getPokemonDetail(name);
 
   const previousName = pokemon.id > 1 ? await getPokemonNameById(pokemon.id - 1) : null;
@@ -25,83 +26,97 @@ export default async function PokemonDetailPage({ params }: { params: { name: st
 
 
   return (
-    <main className="container mx-auto py-8">
-      <NavigationButtons
-        previousName={previousName}
-        nextName={nextName}
-      />
-      <div className="mb-4">
-        <Link
-          href="/"
-          className="inline-block mt-10 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded"
-        >
-          ← Retour à l’accueil
-        </Link>
-      </div>
-
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-6">
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex-1">
-              <Image
-                src={pokemon.sprites.other['official-artwork'].front_default}
-                alt={pokemon.name}
-                quality={80}
-                width={768}
-                height={768}
-                className="w-full h-auto max-w-xs mx-auto"
-              />
-            </div>
-
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold capitalize mb-2">
-                {pokemon.name}
-                <span className="text-gray-500 ml-2">#{pokemon.id.toString().padStart(3, '0')}</span>
-              </h1>
-
-              <div className="flex gap-2 mb-4">
-                {pokemon.types.map((type) => (
-                  <span
-                    key={type.type.name}
-                    className={`px-3 py-1 rounded-full text-white ${typeColors[type.type.name] || 'bg-gray-400'}`}
-                  >
-                    {type.type.name}
+    <main className="container mx-auto py-5 px-4">
+      <div className="max-w-4xl mx-auto bg-red-500 rounded-2xl p-6 shadow-xl border-8 border-gray-900">
+        <div className="bg-white rounded-t-xl p-4 border-b-4 border-gray-200">
+          <div className="bg-gray-100 rounded-lg p-4 border-4 border-gray-200">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1 flex flex-col items-center">
+                <div className="w-full max-w-xs bg-gray-200 rounded-md p-2 border border-gray-300">
+                  <Image
+                    src={pokemon.sprites.other['official-artwork'].front_default}
+                    alt={pokemon.name}
+                    width={400}
+                    height={400}
+                    className="w-full h-auto"
+                    quality={100}
+                  />
+                </div>
+                <div className="mt-2 text-center">
+                  <span className="text-gray-800 text-sm font-semibold bg-gray-300 px-3 py-1 rounded-full">
+                    N° {pokemon.id.toString().padStart(3, '0')}
                   </span>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h3 className="text-gray-500">Height</h3>
-                  <p>{(pokemon.height / 10).toFixed(1)} m</p>
-                </div>
-                <div>
-                  <h3 className="text-gray-500">Weight</h3>
-                  <p>{(pokemon.weight / 10).toFixed(1)} kg</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {pokemon.stats.map((stat) => (
-                  <div key={stat.stat.name}>
-                    <div className="flex justify-between mb-1">
-                      <span className="capitalize">
-                        {stat.stat.name.replace("-", " ")}
-                      </span>
-                      <span>{stat.base_stat}</span>
-                    </div>
-                    <ProgressBar
-                      value={stat.base_stat}
-                      max={255}
-                      color={statColors[stat.stat.name] || 'bg-gray-400'}
-                    />
+              
+              <div className="flex-1 text-gray-800">
+                <h1 className="text-2xl font-bold capitalize mb-2">{pokemon.name}</h1>
+
+                {/* Types */}
+                <div className="flex gap-2 mb-4 flex-wrap">
+                  {pokemon.types.map((type) => (
+                    <span
+                      key={type.type.name}
+                      className={`px-3 py-1 text-white capitalize rounded-md text-sm font-semibold ${typeColors[type.type.name] || 'bg-gray-400'}`}
+                    >
+                      {type.type.name}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Weight and height */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="bg-gray-200 p-3 rounded-md">
+                    <h3 className="text-xs text-gray-600">HEIGHT</h3>
+                    <p className="text-lg">{(pokemon.height / 10).toFixed(1)} m</p>
                   </div>
-                ))}
+                  <div className="bg-gray-200 p-3 rounded-md">
+                    <h3 className="text-xs text-gray-600">WEIGHT</h3>
+                    <p className="text-lg">{(pokemon.weight / 10).toFixed(1)} kg</p>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="bg-gray-200 rounded-md p-4">
+                  <h2 className="text-lg font-bold mb-3">STATS</h2>
+                  <div className="space-y-2">
+                    {pokemon.stats.map((stat) => (
+                      <div key={stat.stat.name}>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="capitalize">{stat.stat.name.replace("-", " ")}</span>
+                          <span>{stat.base_stat}</span>
+                        </div>
+                        <ProgressBar
+                          value={stat.base_stat}
+                          max={255}
+                          color={statColors[stat.stat.name] || 'bg-gray-400'}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between mt-2 items-center">
+          <div className="w-14 h-18 bg-[#00a8e8] rounded-full border-4 border-gray-900 shadow-inner" />
+          <div className="flex flex-col items-center gap-2">
+            <NavigationButtons previousName={previousName} nextName={nextName} />
+            <Link
+              href="/"
+              className="text-white text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
+            >
+              ← Retour
+            </Link>
+          </div>
+          <div className="w-14 h-18 bg-[#ff4554] rounded-full border-4 border-gray-900 shadow-inner" />
+        </div>
       </div>
     </main>
+
   );
 }
