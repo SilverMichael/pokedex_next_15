@@ -30,13 +30,13 @@ const SearchFilters = ({
   };
 
   return (
-    <div className="sticky top-0 bg-white z-10 p-6 shadow-md rounded-b-xl">
+    <div className="sticky top-0 bg-white dark:bg-gray-900 z-10 p-6 shadow-md dark:shadow-gray-800/20 rounded-b-xl">
       <div className="flex flex-col gap-4">
         <button
           onClick={toggleSearch}
-          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-all duration-200"
+          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
         >
-          <span className="font-medium text-gray-700">
+          <span className="font-medium text-gray-700 dark:text-gray-300">
             {showSearch ? "Hide search bar" : "Show search bar"}
           </span>
           {showSearch ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -53,12 +53,12 @@ const SearchFilters = ({
             >
               <div className="flex flex-col gap-6 mt-4">
                 {/* Input input */}
-                <div className="relative">
+                <div className="relative px-1">
                   <Search className="absolute left-3 top-2.5 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search a pokemon..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full pl-10 pr-4 py-2 border text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                   />
@@ -73,8 +73,8 @@ const SearchFilters = ({
                         key={type}
                         onClick={() => toggleType(type)}
                         className={`px-3 py-1 capitalize text-sm font-medium rounded-full border transition-all ${isSelected
-                            ? "bg-blue-500 text-white border-blue-500 shadow"
-                            : "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+                            ? "bg-blue-500 dark:bg-blue-600 text-white border-blue-500 shadow"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400 border-gray-300 hover:bg-gray-200"
                           }`}
                       >
                         {type}
@@ -107,7 +107,7 @@ const SearchFilters = ({
                   {selectedTypes.length > 0 && (
                     <button
                       onClick={onResetFilters}
-                      className="px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600"
+                      className="px-4 py-2 bg-red-500 dark:bg-red-600 text-white text-sm rounded-lg hover:bg-red-600"
                     >
                       Reset filters
                     </button>

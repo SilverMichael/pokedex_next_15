@@ -31,12 +31,12 @@ export default async function PokemonDetailPage({
 
   return (
     <main className="container mx-auto md:py-5 md:px4">
-      <div className="max-w-4xl mx-auto  bg-red-500 rounded-2xl md:p-6 shadow-xl md:border-8 border-gray-900">
-        <div className="bg-white rounded-t-xl p-4 border-b-4 border-gray-200">
-          <div className="bg-gray-100 rounded-lg p-4 border-4 border-gray-200">
+      <div className="max-w-4xl mx-auto  bg-red-500 dark:bg-red-700 rounded-2xl md:p-6 shadow-xl md:border-8 border-gray-900 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-t-xl p-4 border-b-4 border-gray-200 dark:border-gray-600">
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-4 border-gray-200 dark:border-gray-600">
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 flex flex-col items-center">
-                <div className="w-full max-w-xs bg-gray-200 rounded-md p-2 border border-gray-300">
+                <div className="w-full max-w-xs bg-gray-200 dark:bg-gray-600 rounded-md p-2 border border-gray-300">
                   <Image
                     src={pokemon.sprites.other['official-artwork'].front_default}
                     alt={pokemon.name}
@@ -47,14 +47,14 @@ export default async function PokemonDetailPage({
                   />
                 </div>
                 <div className="mt-2 text-center">
-                  <span className="text-gray-800 text-sm font-semibold bg-gray-300 px-3 py-1 rounded-full">
+                  <span className="text-gray-800 dark:text-gray-200 text-sm font-semibold bg-gray-300 dark:bg-gray-500 px-3 py-1 rounded-full">
                     N° {pokemon.id.toString().padStart(3, '0')}
                   </span>
                 </div>
               </div>
 
 
-              <div className="flex-1 text-gray-800">
+              <div className="flex-1 text-gray-800 dark:text-gray-200">
                 <h1 className="text-2xl font-bold capitalize mb-2">{pokemon.name}</h1>
 
                 {/* Types */}
@@ -71,18 +71,18 @@ export default async function PokemonDetailPage({
 
                 {/* Weight and height */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="bg-gray-200 p-3 rounded-md">
-                    <h3 className="text-xs text-gray-600">HEIGHT</h3>
+                  <div className="bg-gray-200 dark:bg-gray-600 p-3 rounded-md">
+                    <h3 className="text-xs text-gray-600 dark:text-gray-300">HEIGHT</h3>
                     <p className="text-lg">{(pokemon.height / 10).toFixed(1)} m</p>
                   </div>
-                  <div className="bg-gray-200 p-3 rounded-md">
-                    <h3 className="text-xs text-gray-600">WEIGHT</h3>
+                  <div className="bg-gray-200 dark:bg-gray-600 p-3 rounded-md">
+                    <h3 className="text-xs text-gray-600 dark:text-gray-300">WEIGHT</h3>
                     <p className="text-lg">{(pokemon.weight / 10).toFixed(1)} kg</p>
                   </div>
                 </div>
 
                 {/* Stats */}
-                <div className="bg-gray-200 rounded-md p-4">
+                <div className="bg-gray-200  dark:bg-gray-600 dark:text-gray-300 rounded-md p-4">
                   <h2 className="text-lg font-bold mb-3">STATS</h2>
                   <div className="space-y-2">
                     {pokemon.stats.map((stat) => (
@@ -107,12 +107,12 @@ export default async function PokemonDetailPage({
 
         {/* Navigation */}
         <div className="flex justify-between mt-2 items-center">
-          <div className="w-14 h-18 bg-[#00a8e8] rounded-full border-4 border-gray-900 shadow-inner" />
+          <div className="w-14 h-18 bg-[#00a8e8] rounded-full border-4 border-gray-900 dark:border-gray-700 shadow-inner" />
           <div className="flex flex-col items-center gap-2">
             <NavigationButtons previousName={previousName} nextName={nextName} />
             <Link
               href="/"
-              className="text-white text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
+              className="text-white text-sm bg-gray-800 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 px-3 py-1 rounded-md"
             >
               ← Go to home
             </Link>

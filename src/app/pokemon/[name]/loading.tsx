@@ -1,20 +1,19 @@
 
-import NavigationButtons from "./NavigationButtons";
 import Link from "next/link";
 
 export default function PokemonDetailSkeleton() {
     return (
         <main className="container mx-auto py-5 px-4">
-            <div className="max-w-4xl mx-auto bg-red-500 rounded-2xl p-6 shadow-xl border-8 border-gray-900">
+            <div className="max-w-4xl mx-auto  bg-red-500 dark:bg-red-700 rounded-2xl md:p-6 shadow-xl md:border-8 border-gray-900 dark:border-gray-700">
 
-                <div className="bg-white rounded-t-xl p-4 border-b-4 border-gray-200">
-                    <div className="bg-gray-100 rounded-lg p-4 border-4 border-gray-200">
+                <div className="bg-white dark:bg-gray-800 rounded-t-xl p-4 border-b-4 border-gray-200 dark:border-gray-600">
+                    <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-4 border-gray-200 dark:border-gray-600">
                         <div className="flex flex-col md:flex-row gap-6">
 
                             <div className="flex-1 flex flex-col items-center">
-                                <div className="w-full max-w-xs bg-gray-300 rounded-md p-2 border border-gray-400 aspect-square animate-pulse" />
+                                <div className="w-full max-w-xs bg-gray-300 dark:bg-gray-600 rounded-md p-2 border border-gray-400 aspect-square animate-pulse" />
                                 <div className="mt-2 text-center">
-                                    <span className="inline-block bg-gray-300 rounded-full px-3 py-1 text-sm font-semibold text-transparent animate-pulse">
+                                    <span className="inline-block text-gray-800 dark:text-gray-200 rounded-full px-3 py-1 text-sm font-semibold  animate-pulse">
                                         N° 000
                                     </span>
                                 </div>
@@ -32,17 +31,17 @@ export default function PokemonDetailSkeleton() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 mb-5">
-                                    <div className="bg-gray-200 p-3 rounded-md">
-                                        <h3 className="text-xs text-gray-600">HEIGHT</h3>
+                                    <div className="bg-gray-200 dark:bg-gray-600 p-3 rounded-md">
+                                        <h3 className="text-xs text-gray-600 dark:text-gray-300">HEIGHT</h3>
                                         <p className="text-lg bg-gray-300 h-6 w-16 animate-pulse" />
                                     </div>
-                                    <div className="bg-gray-200 p-3 rounded-md">
-                                        <h3 className="text-xs text-gray-600">WEIGHT</h3>
+                                    <div className="bg-gray-200  dark:bg-gray-600 p-3 rounded-md">
+                                        <h3 className="text-xs text-gray-600 dark:text-gray-300">WEIGHT</h3>
                                         <p className="text-lg bg-gray-300 h-6 w-16 animate-pulse" />
                                     </div>
                                 </div>
 
-                                <div className="bg-gray-200 rounded-md p-4">
+                                <div className="bg-gray-200 dark:bg-gray-600 dark:text-gray-300 rounded-md p-4">
                                     <h2 className="text-lg font-bold mb-3">STATS</h2>
                                     <div className="space-y-2">
                                         {[...Array(6)].map((_, i) => (

@@ -80,7 +80,7 @@ export const PokemonCard = ({ name, id, sprite, types, onFavoriteUpdate }: Pokem
     >
 
       <Link href={`/pokemon/${name}`} className="group relative">
-        <div className="bg-gray-200 p-4 rounded-lg shadow-md transition-transform hover:scale-105">
+        <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-md transition-transform hover:scale-105">
 
 
           <div className="flex justify-center">
@@ -95,10 +95,10 @@ export const PokemonCard = ({ name, id, sprite, types, onFavoriteUpdate }: Pokem
               className="object-contain"
             />
           </div>
-          <p className="text-gray-500">N°{id}</p>
+          <p className="text-gray-500 dark:text-gray-400">N°{id}</p>
           <div className='flex justify-between'>
             <div>
-              <h2 className="mt-1 capitalize font-medium text-gray-950 group-hover:text-blue-600">
+              <h2 className="mt-1 capitalize font-medium text-gray-950 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
                 {name}
               </h2>
               <div className="flex gap-2">
@@ -115,12 +115,12 @@ export const PokemonCard = ({ name, id, sprite, types, onFavoriteUpdate }: Pokem
             </div>
             <button
               onClick={toggleFavorite}
-              className="w-8 h-8 bg-white rounded-full shadow"
+              className="w-8 h-8 bg-white dark:bg-gray-700 rounded-full shadow"
               aria-label={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`${isFavorite ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400'}`}
+                className={`${isFavorite ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400 dark:text-gray-300'}`}
                 viewBox="0 -4 21 30"
                 width={30}
                 height={30}
