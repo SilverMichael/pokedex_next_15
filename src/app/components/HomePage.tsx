@@ -127,7 +127,7 @@ export default function HomePage() {
     <main className="container mx-auto py-8">
 
 
-      <div className="mt-20 pt-4">
+      <div className="mx-5 md:mx-0 pt-4">
 
         <SearchFilters
           search={search}
@@ -139,7 +139,7 @@ export default function HomePage() {
           onResetFilters={handleResetFilters}
         />
         <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {filteredPokemon.map(pokemon => (
 
             <PokemonCard
@@ -162,15 +162,7 @@ export default function HomePage() {
             </button>
           </div>
         )}
-
-
       </div>
-
-
-
-
-
-
     </main>
   )
 }
