@@ -10,6 +10,7 @@ interface PokemonCardProps {
   id: number
   sprite: string
   types: string[]
+  onFavoriteUpdate?: (name: string) => void
 }
 
 const getDirection = (id: number) => {
@@ -18,7 +19,7 @@ const getDirection = (id: number) => {
 }
 
 
-export const PokemonCard = ({ name, id, sprite, types }: PokemonCardProps) => {
+export const PokemonCard = ({ name, id, sprite, types, onFavoriteUpdate }: PokemonCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false)
   const direction = getDirection(id)
 
@@ -41,16 +42,16 @@ export const PokemonCard = ({ name, id, sprite, types }: PokemonCardProps) => {
     }
   }
 
-  // Charger l'état favori au montage du composant
+
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favourites") || '[]')
     setIsFavorite(favorites.includes(name))
   }, [name])
 
-  // Gérer le clic sur l'étoile
+
   const toggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault() // Empêche la navigation via le lien
-    e.stopPropagation() // Empêche la propagation de l'événement
+    e.preventDefault()
+    e.stopPropagation()
 
     const favorites = JSON.parse(localStorage.getItem('favourites') || '[]')
     let newFavorites
@@ -63,6 +64,10 @@ export const PokemonCard = ({ name, id, sprite, types }: PokemonCardProps) => {
 
     localStorage.setItem('favourites', JSON.stringify(newFavorites))
     setIsFavorite(!isFavorite)
+
+    if (onFavoriteUpdate && isFavorite) {
+      onFavoriteUpdate(name)
+    }
   }
 
   return (

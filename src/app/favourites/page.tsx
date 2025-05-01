@@ -16,6 +16,10 @@ export default function FavoritesPages() {
   const [favourites, setFavourites] = useState<Array<FavoritePokemon>>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
+  const updateFavorites = (removedName: string) => {
+    setFavourites(prev => prev.filter(pokemon => pokemon.name !== removedName))
+  }
+
   useEffect(() => {
     const loadFavorites = async () => {
       try {
@@ -73,6 +77,7 @@ export default function FavoritesPages() {
                 id={pokemon.id}
                 sprite={pokemon.sprite}
                 types={pokemon.types}
+                onFavoriteUpdate={updateFavorites}
               />
             ))}
           </div>
