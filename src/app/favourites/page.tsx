@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { PokemonCard } from "../components/PokemonCard"
 import { getPokemonDetail } from "@/services/pokemon.service"
 import Link from "next/link"
+import { AnimatePresence, motion } from "framer-motion"
 
 interface FavoritePokemon {
   name: string,
@@ -17,7 +18,37 @@ export default function FavoritesPages() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const updateFavorites = (removedName: string) => {
-    setFavourites(prev => prev.filter(pokemon => pokemon.name !== removedName))
+    setTimeout(() => {
+      setFavourites(prev => prev.filter(pokemon => pokemon.name !== removedName))
+    }, 500) 
+  }
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.8,
+      y: 50,
+      rotate: -10 
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      rotate: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0,
+      rotate: 90,
+      transition: { 
+        duration: 0.5,
+        ease: "easeInOut" 
+      }
+    }
   }
 
   useEffect(() => {
@@ -70,16 +101,26 @@ export default function FavoritesPages() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {favourites.map((pokemon) => (
-              <PokemonCard
+            <AnimatePresence>
+              {favourites.map((pokemon) => (
+                <motion.div
                 key={`${pokemon.name}-${pokemon.id}`}
-                name={pokemon.name}
-                id={pokemon.id}
-                sprite={pokemon.sprite}
-                types={pokemon.types}
-                onFavoriteUpdate={updateFavorites}
-              />
-            ))}
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                layout
+                >
+                  <PokemonCard
+                    name={pokemon.name}
+                    id={pokemon.id}
+                    sprite={pokemon.sprite}
+                    types={pokemon.types}
+                    onFavoriteUpdate={updateFavorites}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </div>
