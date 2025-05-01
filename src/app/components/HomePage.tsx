@@ -6,6 +6,8 @@ import SearchFilters from './SearchFilters'
 import { PokemonType, PokemonDetail } from '@/types/pokemon.types'
 import { getPokemonDetail, getPokemonList } from '@/services/pokemon.service'
 
+
+
 export default function HomePage() {
   const [search, setSearch] = useState('')
   const [selectedTypes, setSelectedTypes] = useState<PokemonType[]>([])
@@ -15,6 +17,7 @@ export default function HomePage() {
   const [offset, setOffset] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+
 
 
   const loadAllPokemonNames = async () => {
@@ -122,42 +125,52 @@ export default function HomePage() {
 
   return (
     <main className="container mx-auto py-8">
-      <SearchFilters
-        search={search}
-        onSearchChange={setSearch}
-        selectedTypes={selectedTypes}
-        onTypesChange={setSelectedTypes}
-        showSearch={showSearch}
-        toggleSearch={() => setShowSearch(prev => !prev)}
-        onResetFilters={handleResetFilters}
-       
-      />
 
-      <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {filteredPokemon.map(pokemon => (
-          <PokemonCard
-            key={`${pokemon.name}-${pokemon.id}`}
-            name={pokemon.name}
-            id={pokemon.id}
-            sprite={pokemon.sprites.other['official-artwork'].front_default}
-            types={pokemon.types.map(t => t.type.name)}
-          />
-        ))}
+      <div className="mt-20 pt-4">
+
+        <SearchFilters
+          search={search}
+          onSearchChange={setSearch}
+          selectedTypes={selectedTypes}
+          onTypesChange={setSelectedTypes}
+          showSearch={showSearch}
+          toggleSearch={() => setShowSearch(prev => !prev)}
+          onResetFilters={handleResetFilters}
+        />
+        <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {filteredPokemon.map(pokemon => (
+
+            <PokemonCard
+              key={`${pokemon.name}-${pokemon.id}`}
+              name={pokemon.name}
+              id={pokemon.id}
+              sprite={pokemon.sprites.other['official-artwork'].front_default}
+              types={pokemon.types.map(t => t.type.name)}
+            />
+          ))}
+        </div>
+        {hasMore && (
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={() => fetchPokemonBatch(20, offset)}
+              disabled={isLoading}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer disabled:bg-blue-300"
+            >
+              {isLoading ? 'Chargement...' : 'Afficher plus'}
+            </button>
+          </div>
+        )}
+
+
       </div>
 
-      {hasMore && (
-        <div className="flex justify-center mt-10">
-          <button
-            onClick={() => fetchPokemonBatch(20, offset)}
-            disabled={isLoading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer disabled:bg-blue-300"
-          >
-            {isLoading ? 'Chargement...' : 'Afficher plus'}
-          </button>
-        </div>
-      )}
+
+
+
+
+
     </main>
   )
 }
