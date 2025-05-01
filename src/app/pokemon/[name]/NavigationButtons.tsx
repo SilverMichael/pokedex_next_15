@@ -2,14 +2,20 @@
 
 import { useRouter } from "next/navigation";
 
-export default function NavigationButtons({ previousName, nextName }: { previousName: string | null; nextName: string | null }) {
+export default function NavigationButtons({
+  previousName,
+  nextName,
+}: {
+  previousName: string | null;
+  nextName: string | null;
+}) {
   const router = useRouter();
 
   return (
-    <div className="flex w-full mt-4 space-x-0.5">
+    <div className="flex  w-full mt-4 space-x-2">
       {previousName && (
         <button
-          className="w-1/2 bg-neutral-300 hover:bg-blue-300 text-gray-800 font-bold p-3 rounded-l-lg transition-all cursor-pointer"
+          className={`${nextName ? "w-full md:w-1/2" : "w-full"}  whitespace-nowrap  bg-gray-800 hover:bg-gray-700 text-white font-semibold  px-4 rounded-lg transition-all cursor-pointer`}
           onClick={() => router.push(`/pokemon/${previousName}`)}
         >
           ← Previous
@@ -17,7 +23,7 @@ export default function NavigationButtons({ previousName, nextName }: { previous
       )}
       {nextName && (
         <button
-          className="w-1/2 bg-neutral-300 hover:bg-blue-300 text-gray-800 font-bold p-3 rounded-r-lg  transition-all cursor-pointer"
+          className={` ${previousName ? 'w-full md:w-1/2' : 'w-full '}  whitespace-nowrap  bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-all cursor-pointer`}
           onClick={() => router.push(`/pokemon/${nextName}`)}
         >
           Next →
