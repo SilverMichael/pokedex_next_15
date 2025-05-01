@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { PokemonCard } from './PokemonCard'
 import SearchFilters from './SearchFilters'
 import { PokemonType, PokemonDetail } from '@/types/pokemon.types'
@@ -10,11 +10,13 @@ export default function HomePage() {
   const [search, setSearch] = useState('')
   const [selectedTypes, setSelectedTypes] = useState<PokemonType[]>([])
   const [showSearch, setShowSearch] = useState(false)
-  const [pokemonList, setPokemonList] = useState<PokemonDetail[]>([])
   const [allPokemonNames, setAllPokemonNames] = useState<string[]>([])
+  const [displayedPokemon, setDisplayedPokemon] = useState<PokemonDetail[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [offset, setOffset] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
 
-  // load all pokemons names
+  // Load all pokemons names
   useEffect(() => {
     const fetchAllPokemonNames = async () => {
       try {
@@ -30,61 +32,65 @@ export default function HomePage() {
     fetchAllPokemonNames()
   }, [])
 
-  // load poke filtered details
+  // Reset display when filters change
   useEffect(() => {
-    const fetchFilteredPokemon = async () => {
-      if (allPokemonNames.length === 0) return
+    setDisplayedPokemon([])
+    setOffset(0)
+  }, [search, selectedTypes])
 
-      try {
-        setIsLoading(true)
+  // Load pokemons (initial or more)
+  const loadPokemons = useCallback(async (loadMore = false) => {
+    if (allPokemonNames.length === 0) return
 
+    try {
+      setIsLoading(true)
+      const currentOffset = loadMore ? offset : 0
 
-        const filteredNames = allPokemonNames
-          .filter(name => name.toLowerCase().includes(search.toLowerCase()))
-
-
-        const namesToLoad = selectedTypes.length > 0
-          ? filteredNames
-          : filteredNames.slice(0, 50)
-
-        const details = await Promise.all(namesToLoad.map(name => getPokemonDetail(name)))
-
-
-        const filteredByType = selectedTypes.length > 0
-          ? details.filter(pokemon =>
-            pokemon.types.some(({ type }) => selectedTypes.includes(type.name as PokemonType)))
-          : details
-
-        setPokemonList(filteredByType)
-      } catch (err) {
-        console.error('Error loading Pokémon:', err)
-      } finally {
-        setIsLoading(false)
+      // Filter by name first
+      let namesToLoad = allPokemonNames
+      if (search) {
+        namesToLoad = allPokemonNames.filter(name => 
+          name.toLowerCase().includes(search.toLowerCase())
+        )
       }
+
+      // Determine how many to load
+      const loadCount = loadMore ? 20 : 50
+      const namesBatch = namesToLoad.slice(currentOffset, currentOffset + loadCount)
+
+      // Load details
+      const details = await Promise.all(namesBatch.map(name => getPokemonDetail(name)))
+
+      // Filter by type if needed
+      const filteredDetails = selectedTypes.length > 0
+        ? details.filter(pokemon =>
+            pokemon.types.some(({ type }) => selectedTypes.includes(type.name as PokemonType)))
+        : details
+
+      // Update state
+      setDisplayedPokemon(prev => 
+        loadMore ? [...prev, ...filteredDetails] : filteredDetails
+      )
+      setOffset(currentOffset + namesBatch.length)
+      setHasMore(currentOffset + namesBatch.length < namesToLoad.length)
+    } catch (err) {
+      console.error('Error loading Pokémon:', err)
+    } finally {
+      setIsLoading(false)
     }
+  }, [allPokemonNames, search, selectedTypes, offset])
 
-    const timer = setTimeout(() => {
-      fetchFilteredPokemon()
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [allPokemonNames, search, selectedTypes])
+  // Initial load or filter change
+  useEffect(() => {
+    if (offset === 0 && displayedPokemon.length === 0) {
+      loadPokemons()
+    }
+  }, [loadPokemons, offset, displayedPokemon.length])
 
   const handleResetFilters = useCallback(() => {
     setSearch('')
     setSelectedTypes([])
   }, [])
-
-  const filteredPokemon = useMemo(() => {
-
-    return pokemonList.filter(pokemon => {
-      const matchesSearch = pokemon.name.toLowerCase().includes(search.toLowerCase())
-      const matchesTypes =
-        selectedTypes.length === 0 ||
-        pokemon.types.some(({ type }) => selectedTypes.includes(type.name as PokemonType))
-      return matchesSearch && matchesTypes
-    })
-  }, [pokemonList, search, selectedTypes])
 
   return (
     <main className="container mx-auto py-8">
@@ -101,12 +107,12 @@ export default function HomePage() {
 
         <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
 
-        {isLoading ? (
-          <div className="text-center py-8">Chargement...</div>
+        {isLoading && displayedPokemon.length === 0 ? (
+          <div className="text-center py-8">Loading...</div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {filteredPokemon.map(pokemon => (
+              {displayedPokemon.map(pokemon => (
                 <PokemonCard
                   key={`${pokemon.name}-${pokemon.id}`}
                   name={pokemon.name}
@@ -117,9 +123,21 @@ export default function HomePage() {
               ))}
             </div>
 
-            {filteredPokemon.length === 0 && !isLoading && (
+            {displayedPokemon.length === 0 && !isLoading && (
               <div className="text-center py-8 text-gray-500">
-                Aucun Pokémon trouvé avec ces critères de recherche.
+                No Pokémon found with these search criteria.
+              </div>
+            )}
+
+            {hasMore && (
+              <div className="flex justify-center mt-10"> 
+                <button
+                  onClick={() => loadPokemons(true)}
+                  disabled={isLoading}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer disabled:bg-blue-300"
+                >
+                  {isLoading ? 'Loading...' : 'Show more'}
+                </button>
               </div>
             )}
           </>
