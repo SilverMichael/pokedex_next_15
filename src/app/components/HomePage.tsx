@@ -1,12 +1,10 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { PokemonCard } from './PokemonCard'
 import SearchFilters from './SearchFilters'
 import { PokemonType, PokemonDetail } from '@/types/pokemon.types'
 import { getPokemonDetail, getPokemonList } from '@/services/pokemon.service'
-
-
 
 export default function HomePage() {
   const [search, setSearch] = useState('')
@@ -14,106 +12,71 @@ export default function HomePage() {
   const [showSearch, setShowSearch] = useState(false)
   const [pokemonList, setPokemonList] = useState<PokemonDetail[]>([])
   const [allPokemonNames, setAllPokemonNames] = useState<string[]>([])
-  const [offset, setOffset] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
 
-
-
-  const loadAllPokemonNames = async () => {
-    try {
-      const response = await getPokemonList(1000, 0)
-      setAllPokemonNames(response.results.map(p => p.name))
-      setHasMore(response.results.length > 0)
-    } catch (err) {
-      console.error('Error loading Pokémon names:', err)
-    }
-  }
-  const handleResetFilters = async () => {
-    setSearch('')
-    setSelectedTypes([])
-    setPokemonList([])
-    setOffset(0)
-    setIsLoading(true)
-
-    try {
-      await loadAllPokemonNames()
-      const initialBatch = await getPokemonList(50, 0)
-      const details = await Promise.all(
-        initialBatch.results.map(p => getPokemonDetail(p.name))
-      )
-      setPokemonList(details)
-      setOffset(50)
-    } catch (err) {
-      console.error('Error resetting Pokémon:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadAllPokemonNames()
-  }, [])
-
+  // load all pokemons names
   useEffect(() => {
     const fetchAllPokemonNames = async () => {
       try {
+        setIsLoading(true)
         const response = await getPokemonList(10000, 0)
         setAllPokemonNames(response.results.map(p => p.name))
-        setHasMore(response.results.length > 0)
       } catch (err) {
         console.error('Error loading Pokémon names:', err)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchAllPokemonNames()
   }, [])
 
+  // load poke filtered details
+  useEffect(() => {
+    const fetchFilteredPokemon = async () => {
+      if (allPokemonNames.length === 0) return
 
-  const fetchPokemonBatch = async (limit: number, offset: number) => {
-    if (isLoading || !hasMore) return
+      try {
+        setIsLoading(true)
 
-    setIsLoading(true)
-    try {
-      const namesToLoad = search
-        ? allPokemonNames
+
+        const filteredNames = allPokemonNames
           .filter(name => name.toLowerCase().includes(search.toLowerCase()))
-          .slice(offset, offset + limit)
-        : allPokemonNames.slice(offset, offset + limit)
 
-      if (selectedTypes.length > 0) {
+
+        const namesToLoad = selectedTypes.length > 0
+          ? filteredNames
+          : filteredNames.slice(0, 50)
+
         const details = await Promise.all(namesToLoad.map(name => getPokemonDetail(name)))
-        const filtered = details.filter(pokemon =>
-          pokemon.types.some(({ type }) => selectedTypes.includes(type.name as PokemonType))
-        )
-        setPokemonList(prev => [...prev, ...filtered])
-        setHasMore(filtered.length === limit)
-      } else {
-        const details = await Promise.all(namesToLoad.map(name => getPokemonDetail(name)))
-        setPokemonList(prev => [...prev, ...details])
-        setHasMore(namesToLoad.length === limit)
+
+
+        const filteredByType = selectedTypes.length > 0
+          ? details.filter(pokemon =>
+            pokemon.types.some(({ type }) => selectedTypes.includes(type.name as PokemonType)))
+          : details
+
+        setPokemonList(filteredByType)
+      } catch (err) {
+        console.error('Error loading Pokémon:', err)
+      } finally {
+        setIsLoading(false)
       }
-
-      setOffset(offset + namesToLoad.length)
-    } catch (err) {
-      console.error('Error loading Pokémon:', err)
-    } finally {
-      setIsLoading(false)
     }
-  }
 
-  useEffect(() => {
-    if (allPokemonNames.length > 0) {
-      fetchPokemonBatch(50, 0)
-    }
-  }, [allPokemonNames])
+    const timer = setTimeout(() => {
+      fetchFilteredPokemon()
+    }, 300)
 
-  useEffect(() => {
-    setPokemonList([])
-    setOffset(0)
-    fetchPokemonBatch(50, 0)
-  }, [search, selectedTypes])
+    return () => clearTimeout(timer)
+  }, [allPokemonNames, search, selectedTypes])
+
+  const handleResetFilters = useCallback(() => {
+    setSearch('')
+    setSelectedTypes([])
+  }, [])
 
   const filteredPokemon = useMemo(() => {
+
     return pokemonList.filter(pokemon => {
       const matchesSearch = pokemon.name.toLowerCase().includes(search.toLowerCase())
       const matchesTypes =
@@ -125,10 +88,7 @@ export default function HomePage() {
 
   return (
     <main className="container mx-auto py-8">
-
-
       <div className="mx-5 md:mx-0 pt-4">
-
         <SearchFilters
           search={search}
           onSearchChange={setSearch}
@@ -138,29 +98,31 @@ export default function HomePage() {
           toggleSearch={() => setShowSearch(prev => !prev)}
           onResetFilters={handleResetFilters}
         />
-        <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
-        <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {filteredPokemon.map(pokemon => (
 
-            <PokemonCard
-              key={`${pokemon.name}-${pokemon.id}`}
-              name={pokemon.name}
-              id={pokemon.id}
-              sprite={pokemon.sprites.other['official-artwork'].front_default}
-              types={pokemon.types.map(t => t.type.name)}
-            />
-          ))}
-        </div>
-        {hasMore && (
-          <div className="flex justify-center mt-10">
-            <button
-              onClick={() => fetchPokemonBatch(20, offset)}
-              disabled={isLoading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer disabled:bg-blue-300"
-            >
-              {isLoading ? 'Chargement...' : 'Afficher plus'}
-            </button>
-          </div>
+        <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
+
+        {isLoading ? (
+          <div className="text-center py-8">Chargement...</div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {filteredPokemon.map(pokemon => (
+                <PokemonCard
+                  key={`${pokemon.name}-${pokemon.id}`}
+                  name={pokemon.name}
+                  id={pokemon.id}
+                  sprite={pokemon.sprites.other['official-artwork'].front_default}
+                  types={pokemon.types.map(t => t.type.name)}
+                />
+              ))}
+            </div>
+
+            {filteredPokemon.length === 0 && !isLoading && (
+              <div className="text-center py-8 text-gray-500">
+                Aucun Pokémon trouvé avec ces critères de recherche.
+              </div>
+            )}
+          </>
         )}
       </div>
     </main>
