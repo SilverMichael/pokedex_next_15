@@ -16,7 +16,11 @@ const statColors: Record<string, string> = {
 };
 
 
-export default async function PokemonDetailPage({ params }: { params: { name: string } }) {
+export default async function PokemonDetailPage({
+  params
+}: {
+  params: { name: string }
+}) {
   const { name } = params;
 
   const pokemon = await getPokemonDetail(name);
@@ -26,8 +30,8 @@ export default async function PokemonDetailPage({ params }: { params: { name: st
 
 
   return (
-    <main className="container mx-auto py-5 px-4">
-      <div className="max-w-4xl mx-auto bg-red-500 rounded-2xl p-6 shadow-xl border-8 border-gray-900">
+    <main className="container mx-auto md:py-5 md:px4">
+      <div className="max-w-4xl mx-auto  bg-red-500 rounded-2xl md:p-6 shadow-xl md:border-8 border-gray-900">
         <div className="bg-white rounded-t-xl p-4 border-b-4 border-gray-200">
           <div className="bg-gray-100 rounded-lg p-4 border-4 border-gray-200">
             <div className="flex flex-col md:flex-row gap-6">
@@ -49,7 +53,7 @@ export default async function PokemonDetailPage({ params }: { params: { name: st
                 </div>
               </div>
 
-              
+
               <div className="flex-1 text-gray-800">
                 <h1 className="text-2xl font-bold capitalize mb-2">{pokemon.name}</h1>
 
