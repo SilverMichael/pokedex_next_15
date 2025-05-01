@@ -1,8 +1,10 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light dark;
+  --background-light: url("../images/pokecenter.jfif");
+  --background-dark: url("../images/pokecenternight.jfif")
 }
 
 @theme inline {
@@ -20,9 +22,28 @@
 }
 
 body {
-  background-image: url("../images/pokecenter.jfif");
+  background-image: var(--background-light);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
+  transition: background-color 0.2s ease, background-image 0.9s ease;
+}
+
+.dark body {
+  background-image: var(--background-dark);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.dark body::before {
+  background-color: rgba(0, 0, 0, 0.7);
 }
