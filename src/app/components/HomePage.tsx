@@ -105,7 +105,7 @@ export default function HomePage() {
           onResetFilters={handleResetFilters}
         />
 
-        <h1 className="text-4xl font-bold text-center mb-8">Pokédex</h1>
+        <p className="text-4xl font-bold text-center mb-8">Pokedex</p>
 
         {isLoading && displayedPokemon.length === 0 ? (
           <div className="text-center py-8">Loading...</div>
